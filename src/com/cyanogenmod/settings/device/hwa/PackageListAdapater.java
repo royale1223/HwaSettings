@@ -50,14 +50,14 @@ public class PackageListAdapater extends SimpleCursorAdapter {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
+		String packageName = mCursor.getString(mCursor
+				.getColumnIndex(PackageListProvider.PACKAGE_NAME));
 		holder.label.setText(mCursor.getString(mCursor
 				.getColumnIndex(PackageListProvider.APPLICATION_LABEL)));
-		holder.packageName.setText(mCursor.getString(mCursor
-				.getColumnIndex(PackageListProvider.PACKAGE_NAME)));
+		holder.packageName.setText(packageName);
 		try {
-			holder.icon
-					.setImageDrawable(mPackageManager.getApplicationIcon(mCursor.getString(mCursor
-							.getColumnIndex(PackageListProvider.PACKAGE_NAME))));
+			holder.icon.setImageDrawable(mPackageManager
+					.getApplicationIcon(packageName));
 		} catch (NameNotFoundException e) {
 			Log.w(TAG, "Package not found");
 		}
