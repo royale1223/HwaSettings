@@ -10,11 +10,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class DatabaseTools {
 
-	private static final String TAG = "DatabaseTools";
+	protected static final String TAG = "DatabaseTools";
 
 	public static void scanPackages(SQLiteDatabase database, Context context) {
 		File denyFolder = new File("/data/local/hwui.deny");
@@ -26,27 +25,27 @@ public class DatabaseTools {
 		for (int i = 0; i < files.length; i++) {
 			packageBlacklist[i] = files[i].getName();
 		}
-		Log.i(TAG, files.length + " packages blacklisted.");
 		Cursor cursor = database.query(DatabaseHelper.PACKAGE_TABLE,
 				new String[] { PackageListProvider.PACKAGE_NAME }, null, null,
 				null, null, null);
-		String[] packages = new String[cursor.getCount()];
+		String[] databasePackages = new String[cursor.getCount()];
 		if (cursor.moveToFirst()) {
 			do
-				packages[cursor.getPosition()] = cursor.getString(cursor
-						.getColumnIndex(PackageListProvider.PACKAGE_NAME));
+				databasePackages[cursor.getPosition()] = cursor
+						.getString(cursor
+								.getColumnIndex(PackageListProvider.PACKAGE_NAME));
 			while (cursor.moveToNext());
 		}
 		cursor.close();
 		PackageManager pm = context.getPackageManager();
 		List<ApplicationInfo> list = pm
 				.getInstalledApplications(PackageManager.GET_META_DATA);
-		String[] allApps = new String[list.size()];
+		String[] installedPackages = new String[list.size()];
 		for (int i = 0; i < list.size(); i++) {
 			ApplicationInfo info = list.get(i);
 			boolean hwaIsDiabled = false;
 			String packageName = info.packageName;
-			allApps[i] = info.packageName;
+			installedPackages[i] = info.packageName;
 			if (Arrays.asList(packageBlacklist).contains(packageName))
 				hwaIsDiabled = true;
 			else
@@ -57,12 +56,19 @@ public class DatabaseTools {
 			values.put(PackageListProvider.PACKAGE_NAME, packageName);
 			values.put(PackageListProvider.HWA_DISABLED,
 					String.valueOf(hwaIsDiabled));
-			if (Arrays.asList(packages).contains(packageName)) {
+			if (Arrays.asList(databasePackages).contains(packageName)) {
 				database.update(DatabaseHelper.PACKAGE_TABLE, values,
 						PackageListProvider.PACKAGE_NAME + " IS ?",
 						new String[] { packageName });
 			} else
 				database.insert(DatabaseHelper.PACKAGE_TABLE, null, values);
+		}
+		for (int i = 0; i < databasePackages.length; i++) {
+			if (Arrays.asList(installedPackages).contains(databasePackages[i])) {
+				database.delete(DatabaseHelper.PACKAGE_TABLE,
+						PackageListProvider.PACKAGE_NAME + " IS ?",
+						new String[] { databasePackages[i] });
+			}
 		}
 	}
 }
