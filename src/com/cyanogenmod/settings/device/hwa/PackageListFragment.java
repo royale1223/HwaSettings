@@ -1,15 +1,11 @@
 package com.cyanogenmod.settings.device.hwa;
 
-import java.io.File;
-import java.io.IOException;
-
-import android.app.ActivityManager;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -34,7 +30,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class PackageListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,
@@ -47,10 +42,8 @@ public class PackageListFragment extends ListFragment implements
 	protected Context mContext;
 	private String mCurFilter = "";
 	private ListView mListView;
-	private ActivityManager mActivityManager;
 	private ContentResolver mContentResolver;
 	private LoaderManager mLoaderManager;
-	private CheckBox hwaCheck;
 	private boolean mBusy;
 
 	private LayoutInflater mInflater;
@@ -63,8 +56,6 @@ public class PackageListFragment extends ListFragment implements
 		super.onActivityCreated(savedInstanceState);
 		mContext = getActivity();
 		mListView = (ListView) getListView();
-		mActivityManager = (ActivityManager) mContext
-				.getSystemService(Context.ACTIVITY_SERVICE);
 		mContentResolver = mContext.getContentResolver();
 		mPackageObserver = new PackageObserver(new Handler());
 		mContentResolver.registerContentObserver(
@@ -117,6 +108,7 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		adapter.swapCursor(cursor);
+		adapter.notifyDataSetChanged();
 		setListShown(true);
 	}
 
@@ -192,94 +184,16 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		Cursor cursor = mContentResolver.query(PackageListProvider.PACKAGE_URI,
-				new String[] { PackageListProvider.PACKAGE_NAME },
-				PackageListProvider._ID + " IS ?",
-				new String[] { String.valueOf(id) }, null);
-		String packageName;
-		if (cursor.moveToFirst()) {
-			packageName = cursor.getString(cursor
-					.getColumnIndex(PackageListProvider.PACKAGE_NAME));
-		} else
-			return;
-		cursor.close();
-		hwaCheck = (CheckBox) view.findViewById(R.id.hwa_settings_enabled);
-		if (hwaCheck.isChecked()) {
-			hwaCheck.setChecked(false);
-			boolean disabled = disableHwa(packageName);
-			if (disabled)
-				Toast.makeText(
-						mContext,
-						mContext.getString(
-								R.string.hwa_settings_hwa_disabled_toast,
-								packageName), Toast.LENGTH_SHORT).show();
-			else {
-				Toast.makeText(
-						mContext,
-						mContext.getString(
-								R.string.hwa_settings_hwa_disable_failed_toast,
-								packageName), Toast.LENGTH_SHORT).show();
-				hwaCheck.setChecked(true);
-			}
-		} else {
-			hwaCheck.setChecked(true);
-			boolean enabled = enableHwa(packageName);
-			if (enabled)
-				Toast.makeText(
-						mContext,
-						mContext.getString(
-								R.string.hwa_settings_hwa_enabled_toast,
-								packageName), Toast.LENGTH_SHORT).show();
-
-			else {
-				Toast.makeText(
-						mContext,
-						mContext.getString(
-								R.string.hwa_settings_hwa_enable_failed_toast,
-								packageName), Toast.LENGTH_SHORT).show();
-				hwaCheck.setChecked(false);
-			}
-		}
-		mActivityManager.killBackgroundProcesses(packageName);
-	}
-
-	private boolean enableHwa(String packageName) {
-		boolean enabled = false;
-		File file = new File("/data/local/hwui.deny/" + packageName);
-		if (file.exists()) {
-			enabled = file.delete();
-		} else
-			enabled = true;
-		if (enabled) {
-			ContentValues values = new ContentValues();
-			values.put(PackageListProvider.HWA_ENABLED, "true");
-			mContentResolver.update(Uri.withAppendedPath(
-					PackageListProvider.PACKAGE_URI, packageName), values,
-					null, null);
-		}
-		return enabled;
-	}
-
-	private boolean disableHwa(String packageName) {
-		boolean disabled = false;
-		File file = new File("/data/local/hwui.deny/" + packageName);
-		if (!file.exists()) {
-			try {
-				disabled = file.createNewFile();
-			} catch (IOException e) {
-				Log.w(TAG, "Creation of /data/local/hwui.deny/" + packageName
-						+ " failed : IOException");
-			}
-		} else
-			disabled = true;
-		if (disabled) {
-			ContentValues values = new ContentValues();
-			values.put(PackageListProvider.HWA_ENABLED, "false");
-			mContentResolver.update(Uri.withAppendedPath(
-					PackageListProvider.PACKAGE_URI, packageName), values,
-					null, null);
-		}
-		return disabled;
+		CheckBox hwaCheck = (CheckBox) view
+				.findViewById(R.id.hwa_settings_enabled);
+		boolean enableHwa = !hwaCheck.isChecked();
+		//hwaCheck.setChecked(enableHwa);
+		String packageName = (String) ((TextView) view
+				.findViewById(R.id.hwa_settings_packagename)).getText();
+		Intent service = new Intent(mContext, HwaSettingsService.class);
+		service.putExtra(PackageListProvider.PACKAGE_NAME, packageName);
+		service.putExtra(PackageListProvider.HWA_ENABLED, enableHwa);
+		mContext.startService(service);
 	}
 
 	public class PackageListAdapater extends SimpleCursorAdapter {
@@ -355,7 +269,7 @@ public class PackageListFragment extends ListFragment implements
 
 		@Override
 		public boolean deliverSelfNotifications() {
-			return true;
+			return false;
 		}
 
 		@Override
