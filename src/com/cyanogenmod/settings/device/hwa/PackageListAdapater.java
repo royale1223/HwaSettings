@@ -58,7 +58,7 @@ public class PackageListAdapater extends SimpleCursorAdapter {
 		} catch (NameNotFoundException e) {
 			Log.w(TAG, "Package not found");
 		}
-		holder.blocked.setChecked(Boolean.parseBoolean(mCursor
+		holder.blocked.setChecked(!Boolean.parseBoolean(mCursor
 				.getString(mCursor
 						.getColumnIndex(PackageListProvider.HWA_DISABLED))));
 		return convertView;

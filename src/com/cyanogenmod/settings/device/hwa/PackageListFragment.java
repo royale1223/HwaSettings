@@ -46,6 +46,9 @@ public class PackageListFragment extends ListFragment implements
 		mListView.setOnItemClickListener(listener);
 		mSearchView.setOnQueryTextListener(this);
 		mSearchView.setSubmitButtonEnabled(false);
+		mSearchView.setEnabled(false);
+		mSearchView.setFocusable(false);
+		mSearchView.setClickable(false);
 		new ScanForPackages().execute();
 	}
 
@@ -86,6 +89,9 @@ public class PackageListFragment extends ListFragment implements
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		adapter.swapCursor(cursor);
 		setListShown(true);
+		mSearchView.setEnabled(true);
+		mSearchView.setFocusable(true);
+		mSearchView.setClickable(true);
 	}
 
 	@Override
@@ -136,7 +142,7 @@ public class PackageListFragment extends ListFragment implements
 			TextView tv = (TextView) view
 					.findViewById(R.id.hwa_settings_packagename);
 			String packageName = (String) tv.getText();
-			if (!cb.isChecked()) {
+			if (cb.isChecked()) {
 				boolean disabled = disableHwa(packageName);
 				if (disabled) {
 					Toast.makeText(
@@ -144,7 +150,7 @@ public class PackageListFragment extends ListFragment implements
 							mContext.getString(
 									R.string.hwa_settings_hwa_disabled_toast,
 									packageName), Toast.LENGTH_SHORT).show();
-					cb.setChecked(true);
+					cb.setChecked(false);
 				} else
 					Toast.makeText(
 							mContext,
@@ -159,7 +165,7 @@ public class PackageListFragment extends ListFragment implements
 							mContext.getString(
 									R.string.hwa_settings_hwa_enabled_toast,
 									packageName), Toast.LENGTH_SHORT).show();
-					cb.setChecked(false);
+					cb.setChecked(true);
 				} else
 					Toast.makeText(
 							mContext,
