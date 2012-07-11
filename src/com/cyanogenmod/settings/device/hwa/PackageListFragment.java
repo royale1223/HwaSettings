@@ -83,11 +83,6 @@ public class PackageListFragment extends ListFragment implements
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-		String[] columns = cursor.getColumnNames();
-		for (int i = 0; i < columns.length; i++) {
-			Log.d(TAG, columns[i]);
-		}
-		Log.d(TAG, "count of cursor " + cursor.getCount());
 		adapter.swapCursor(cursor);
 		setListShown(true);
 	}
@@ -99,7 +94,6 @@ public class PackageListFragment extends ListFragment implements
 
 	@Override
 	public boolean onQueryTextChange(String newText) {
-		Log.d(TAG, "query : " + newText);
 		query = newText;
 		if (newText.length() > 0)
 			mListView.setFilterText(newText);
@@ -136,7 +130,6 @@ public class PackageListFragment extends ListFragment implements
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			Log.d(TAG, "item clicked");
 			CheckBox cb = (CheckBox) view
 					.findViewById(R.id.hwa_settings_blocked);
 			TextView tv = (TextView) view
@@ -162,74 +155,17 @@ public class PackageListFragment extends ListFragment implements
 
 		private boolean enableHwa(String packageName) {
 			return new File("/data/local/hwui.deny/" + packageName).delete();
-			
-//			int exitValue = -1;
-//			try {
-//				exitValue = Runtime
-//						.getRuntime()
-//						.exec("su -c 'rm /data/local/hwui.deny/" + packageName
-//								+ "'").waitFor();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			Log.d(TAG, "exit value is " + exitValue);
-//			if (exitValue == 0) {
-//				Toast.makeText(mContext, "Hwui is enabled for " + packageName,
-//						Toast.LENGTH_LONG).show();
-//				ContentValues values = new ContentValues();
-//				values.put(PackageListProvider.HWA_DISABLED,
-//						String.valueOf(false));
-//				mContext.getContentResolver().update(
-//						Uri.parse("content://" + PackageListProvider.AUTHORITY
-//								+ "/" + PackageListProvider.BASE_PATH
-//								+ "/package/" + packageName), values, null,
-//						null);
-//				return true;
-//			} else
-//				return false;
 		}
 
 		private boolean disableHwa(String packageName) {
 			try {
-				return new File("/data/local/hwui.deny/"
-									+ packageName).createNewFile();
+				return new File("/data/local/hwui.deny/" + packageName)
+						.createNewFile();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.w(TAG, "Creation of /data/local/hwui.deny/" + packageName
+						+ " failed : IOException");
 				return false;
 			}
-//			int exitValue = -1;
-//			try {
-//				exitValue = Runtime
-//						.getRuntime()
-//						.exec("su -c 'touch /data/local/hwui.deny/"
-//								+ packageName + "'").waitFor();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			Log.d(TAG, "exit value is " + exitValue);
-//			if (exitValue == 0) {
-//				Toast.makeText(mContext, "Hwui is disabled for " + packageName,
-//						Toast.LENGTH_LONG).show();
-//				ContentValues values = new ContentValues();
-//				values.put(PackageListProvider.HWA_DISABLED,
-//						String.valueOf(true));
-//				mContext.getContentResolver().update(
-//						Uri.parse("content://" + PackageListProvider.AUTHORITY
-//								+ "/" + PackageListProvider.BASE_PATH
-//								+ "/package/" + packageName), values, null,
-//						null);
-//				return true;
-//			} else
-//				return false;
 		}
 	};
 }
