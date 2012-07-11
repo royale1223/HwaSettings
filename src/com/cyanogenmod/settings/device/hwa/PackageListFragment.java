@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PackageListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener {
@@ -138,17 +139,23 @@ public class PackageListFragment extends ListFragment implements
 			if (!cb.isChecked()) {
 				boolean disabled = disableHwa(packageName);
 				if (disabled) {
-					Log.d(TAG, "disabled hwa for " + packageName);
+					Toast.makeText(mContext, "Disabled hwa for " + packageName,
+							Toast.LENGTH_SHORT).show();
 					cb.setChecked(true);
 				} else
-					Log.d(TAG, "disabling hwa for " + packageName + " failed");
+					Toast.makeText(mContext,
+							"Disabling hwa for " + packageName + " failed",
+							Toast.LENGTH_SHORT).show();
 			} else {
 				boolean enabled = enableHwa(packageName);
 				if (enabled) {
-					Log.d(TAG, "enabled hwa for " + packageName);
+					Toast.makeText(mContext, "Enabled hwa for " + packageName,
+							Toast.LENGTH_SHORT).show();
 					cb.setChecked(false);
 				} else
-					Log.d(TAG, "enabling hwa for " + packageName + " failed");
+					Toast.makeText(mContext,
+							"Enabling hwa for " + packageName + " failed",
+							Toast.LENGTH_SHORT).show();
 			}
 
 		}
