@@ -3,8 +3,11 @@ package com.cyanogenmod.settings.device.hwa;
 import java.io.File;
 import java.io.IOException;
 
+import android.app.ActivityManager;
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -33,6 +36,8 @@ public class PackageListFragment extends ListFragment implements
 	protected Context mContext;
 	private String query = "";
 	private ListView mListView;
+	private ActivityManager mActivityManager;
+	private ContentResolver mContentResolver;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -40,6 +45,9 @@ public class PackageListFragment extends ListFragment implements
 		setListShown(false);
 		mContext = getActivity();
 		mListView = (ListView) getListView();
+		mActivityManager = (ActivityManager) mContext
+				.getSystemService(Context.ACTIVITY_SERVICE);
+		mContentResolver = mContext.getContentResolver();
 		mSearchView = (SearchView) getActivity().findViewById(
 				R.id.hwa_package_list_search_view);
 		mListView.setTextFilterEnabled(true);
@@ -114,7 +122,7 @@ public class PackageListFragment extends ListFragment implements
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			mContext.getContentResolver().insert(
+			mContentResolver.insert(
 					Uri.parse("content://" + PackageListProvider.AUTHORITY
 							+ "/" + PackageListProvider.BASE_PATH + "/scan"),
 					null);
@@ -138,52 +146,85 @@ public class PackageListFragment extends ListFragment implements
 					.findViewById(R.id.hwa_settings_packagename);
 			String packageName = (String) tv.getText();
 			if (cb.isChecked()) {
+				cb.setChecked(false);
 				boolean disabled = disableHwa(packageName);
-				if (disabled) {
+				if (disabled)
 					Toast.makeText(
 							mContext,
 							mContext.getString(
 									R.string.hwa_settings_hwa_disabled_toast,
 									packageName), Toast.LENGTH_SHORT).show();
-					cb.setChecked(false);
-				} else
+				else {
 					Toast.makeText(
 							mContext,
 							mContext.getString(
 									R.string.hwa_settings_hwa_disable_failed_toast,
 									packageName), Toast.LENGTH_SHORT).show();
+					cb.setChecked(true);
+				}
 			} else {
+				cb.setChecked(true);
 				boolean enabled = enableHwa(packageName);
-				if (enabled) {
+				if (enabled)
 					Toast.makeText(
 							mContext,
 							mContext.getString(
 									R.string.hwa_settings_hwa_enabled_toast,
 									packageName), Toast.LENGTH_SHORT).show();
-					cb.setChecked(true);
-				} else
+
+				else {
 					Toast.makeText(
 							mContext,
 							mContext.getString(
 									R.string.hwa_settings_hwa_enable_failed_toast,
 									packageName), Toast.LENGTH_SHORT).show();
+					cb.setChecked(false);
+				}
 			}
-
+			mActivityManager.restartPackage(packageName);
 		}
 
 		private boolean enableHwa(String packageName) {
-			return new File("/data/local/hwui.deny/" + packageName).delete();
+			boolean enabled = false;
+			File file = new File("/data/local/hwui.deny/" + packageName);
+			if (file.exists()) {
+				enabled = file.delete();
+			} else
+				enabled = true;
+			if (enabled) {
+				ContentValues values = new ContentValues();
+				values.put(PackageListProvider.HWA_DISABLED, "false");
+				mContentResolver.update(
+						Uri.parse("content://" + PackageListProvider.AUTHORITY
+								+ "/" + PackageListProvider.BASE_PATH
+								+ "/package/" + packageName), values, null,
+						null);
+			}
+			return enabled;
 		}
 
 		private boolean disableHwa(String packageName) {
-			try {
-				return new File("/data/local/hwui.deny/" + packageName)
-						.createNewFile();
-			} catch (IOException e) {
-				Log.w(TAG, "Creation of /data/local/hwui.deny/" + packageName
-						+ " failed : IOException");
-				return false;
+			boolean disabled = false;
+			File file = new File("/data/local/hwui.deny/" + packageName);
+			if (!file.exists()) {
+				try {
+					disabled = file.createNewFile();
+				} catch (IOException e) {
+					Log.w(TAG, "Creation of /data/local/hwui.deny/"
+							+ packageName + " failed : IOException");
+				}
+			} else
+				disabled = true;
+			if (disabled) {
+				ContentValues values = new ContentValues();
+				values.put(PackageListProvider.HWA_DISABLED, "true");
+				mContentResolver.update(
+						Uri.parse("content://" + PackageListProvider.AUTHORITY
+								+ "/" + PackageListProvider.BASE_PATH
+								+ "/package/" + packageName), values, null,
+						null);
 			}
+			return disabled;
 		}
 	};
 }
