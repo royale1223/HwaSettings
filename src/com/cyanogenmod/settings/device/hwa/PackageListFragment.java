@@ -86,7 +86,7 @@ public class PackageListFragment extends ListFragment implements
 		CursorLoader cursorLoader = new CursorLoader(getActivity(),
 				PackageListProvider.CONTENT_URI, null,
 				PackageListProvider.APPLICATION_LABEL + " LIKE '%" + query
-						+ "%'", null, null);
+						+ "%'", null, PackageListProvider.APPLICATION_LABEL);
 		return cursorLoader;
 	}
 
