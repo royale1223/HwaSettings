@@ -3,5 +3,6 @@
 
     <string name="hello">Hello World, HwaActivity!</string>
     <string name="app_name">HWA Settings</string>
+    <string name="image_content"/>
 
 </resources>
