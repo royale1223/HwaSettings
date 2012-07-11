@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:iconifiedByDefault="false"
-        android:queryHint="Type to filter" />
+        android:queryHint="@string/hwa_settings_search_hint" />
 
     <fragment
         android:id="@+id/hwa_package_list_fragment"

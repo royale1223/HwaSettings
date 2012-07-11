@@ -139,23 +139,33 @@ public class PackageListFragment extends ListFragment implements
 			if (!cb.isChecked()) {
 				boolean disabled = disableHwa(packageName);
 				if (disabled) {
-					Toast.makeText(mContext, "Disabled hwa for " + packageName,
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(
+							mContext,
+							mContext.getString(
+									R.string.hwa_settings_hwa_disabled_toast,
+									packageName), Toast.LENGTH_SHORT).show();
 					cb.setChecked(true);
 				} else
-					Toast.makeText(mContext,
-							"Disabling hwa for " + packageName + " failed",
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(
+							mContext,
+							mContext.getString(
+									R.string.hwa_settings_hwa_disable_failed_toast,
+									packageName), Toast.LENGTH_SHORT).show();
 			} else {
 				boolean enabled = enableHwa(packageName);
 				if (enabled) {
-					Toast.makeText(mContext, "Enabled hwa for " + packageName,
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(
+							mContext,
+							mContext.getString(
+									R.string.hwa_settings_hwa_enabled_toast,
+									packageName), Toast.LENGTH_SHORT).show();
 					cb.setChecked(false);
 				} else
-					Toast.makeText(mContext,
-							"Enabling hwa for " + packageName + " failed",
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(
+							mContext,
+							mContext.getString(
+									R.string.hwa_settings_hwa_enable_failed_toast,
+									packageName), Toast.LENGTH_SHORT).show();
 			}
 
 		}

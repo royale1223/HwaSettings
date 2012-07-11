@@ -9,7 +9,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="3dp"
-        android:contentDescription="@string/image_content" />
+        android:contentDescription="@string/hwa_settings_search_hint" />
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
