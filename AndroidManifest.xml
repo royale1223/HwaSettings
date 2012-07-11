@@ -17,7 +17,7 @@
         </provider>
 
         <activity
-            android:name=".HwaActivity"
+            android:name=".HwaSettingsActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
