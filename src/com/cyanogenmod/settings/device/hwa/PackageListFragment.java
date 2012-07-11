@@ -46,9 +46,6 @@ public class PackageListFragment extends ListFragment implements
 		mListView.setOnItemClickListener(listener);
 		mSearchView.setOnQueryTextListener(this);
 		mSearchView.setSubmitButtonEnabled(false);
-		mSearchView.setEnabled(false);
-		mSearchView.setFocusable(false);
-		mSearchView.setClickable(false);
 		new ScanForPackages().execute();
 	}
 
@@ -89,9 +86,7 @@ public class PackageListFragment extends ListFragment implements
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		adapter.swapCursor(cursor);
 		setListShown(true);
-		mSearchView.setEnabled(true);
-		mSearchView.setFocusable(true);
-		mSearchView.setClickable(true);
+		mSearchView.setVisibility(View.VISIBLE);
 	}
 
 	@Override
