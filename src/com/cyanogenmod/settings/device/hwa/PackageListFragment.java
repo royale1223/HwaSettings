@@ -27,7 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class PackageListFragment extends ListFragment implements
-		LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener {
+		LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,
+		OnItemClickListener {
 
 	protected static final String TAG = "PackageListFragment";
 	private static final int PACKAGE_LIST_LOADER = 0;
@@ -51,7 +52,7 @@ public class PackageListFragment extends ListFragment implements
 		mSearchView = (SearchView) getActivity().findViewById(
 				R.id.hwa_package_list_search_view);
 		mListView.setTextFilterEnabled(true);
-		mListView.setOnItemClickListener(listener);
+		mListView.setOnItemClickListener(this);
 		mSearchView.setOnQueryTextListener(this);
 		mSearchView.setSubmitButtonEnabled(false);
 		new ScanForPackages().execute();
@@ -135,96 +136,91 @@ public class PackageListFragment extends ListFragment implements
 		}
 	}
 
-	private OnItemClickListener listener = new OnItemClickListener() {
-
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-			CheckBox cb = (CheckBox) view
-					.findViewById(R.id.hwa_settings_blocked);
-			TextView tv = (TextView) view
-					.findViewById(R.id.hwa_settings_packagename);
-			String packageName = (String) tv.getText();
-			if (cb.isChecked()) {
-				cb.setChecked(false);
-				boolean disabled = disableHwa(packageName);
-				if (disabled)
-					Toast.makeText(
-							mContext,
-							mContext.getString(
-									R.string.hwa_settings_hwa_disabled_toast,
-									packageName), Toast.LENGTH_SHORT).show();
-				else {
-					Toast.makeText(
-							mContext,
-							mContext.getString(
-									R.string.hwa_settings_hwa_disable_failed_toast,
-									packageName), Toast.LENGTH_SHORT).show();
-					cb.setChecked(true);
-				}
-			} else {
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		CheckBox cb = (CheckBox) view.findViewById(R.id.hwa_settings_blocked);
+		TextView tv = (TextView) view
+				.findViewById(R.id.hwa_settings_packagename);
+		String packageName = (String) tv.getText();
+		if (cb.isChecked()) {
+			cb.setChecked(false);
+			boolean disabled = disableHwa(packageName);
+			if (disabled)
+				Toast.makeText(
+						mContext,
+						mContext.getString(
+								R.string.hwa_settings_hwa_disabled_toast,
+								packageName), Toast.LENGTH_SHORT).show();
+			else {
+				Toast.makeText(
+						mContext,
+						mContext.getString(
+								R.string.hwa_settings_hwa_disable_failed_toast,
+								packageName), Toast.LENGTH_SHORT).show();
 				cb.setChecked(true);
-				boolean enabled = enableHwa(packageName);
-				if (enabled)
-					Toast.makeText(
-							mContext,
-							mContext.getString(
-									R.string.hwa_settings_hwa_enabled_toast,
-									packageName), Toast.LENGTH_SHORT).show();
-
-				else {
-					Toast.makeText(
-							mContext,
-							mContext.getString(
-									R.string.hwa_settings_hwa_enable_failed_toast,
-									packageName), Toast.LENGTH_SHORT).show();
-					cb.setChecked(false);
-				}
 			}
-			mActivityManager.restartPackage(packageName);
-		}
+		} else {
+			cb.setChecked(true);
+			boolean enabled = enableHwa(packageName);
+			if (enabled)
+				Toast.makeText(
+						mContext,
+						mContext.getString(
+								R.string.hwa_settings_hwa_enabled_toast,
+								packageName), Toast.LENGTH_SHORT).show();
 
-		private boolean enableHwa(String packageName) {
-			boolean enabled = false;
-			File file = new File("/data/local/hwui.deny/" + packageName);
-			if (file.exists()) {
-				enabled = file.delete();
-			} else
-				enabled = true;
-			if (enabled) {
-				ContentValues values = new ContentValues();
-				values.put(PackageListProvider.HWA_DISABLED, "false");
-				mContentResolver.update(
-						Uri.parse("content://" + PackageListProvider.AUTHORITY
-								+ "/" + PackageListProvider.BASE_PATH
-								+ "/package/" + packageName), values, null,
-						null);
+			else {
+				Toast.makeText(
+						mContext,
+						mContext.getString(
+								R.string.hwa_settings_hwa_enable_failed_toast,
+								packageName), Toast.LENGTH_SHORT).show();
+				cb.setChecked(false);
 			}
-			return enabled;
 		}
+		restartLoading();
+		mActivityManager.restartPackage(packageName);
+	}
 
-		private boolean disableHwa(String packageName) {
-			boolean disabled = false;
-			File file = new File("/data/local/hwui.deny/" + packageName);
-			if (!file.exists()) {
-				try {
-					disabled = file.createNewFile();
-				} catch (IOException e) {
-					Log.w(TAG, "Creation of /data/local/hwui.deny/"
-							+ packageName + " failed : IOException");
-				}
-			} else
-				disabled = true;
-			if (disabled) {
-				ContentValues values = new ContentValues();
-				values.put(PackageListProvider.HWA_DISABLED, "true");
-				mContentResolver.update(
-						Uri.parse("content://" + PackageListProvider.AUTHORITY
-								+ "/" + PackageListProvider.BASE_PATH
-								+ "/package/" + packageName), values, null,
-						null);
-			}
-			return disabled;
+	private boolean enableHwa(String packageName) {
+		boolean enabled = false;
+		File file = new File("/data/local/hwui.deny/" + packageName);
+		if (file.exists()) {
+			enabled = file.delete();
+		} else
+			enabled = true;
+		if (enabled) {
+			ContentValues values = new ContentValues();
+			values.put(PackageListProvider.HWA_DISABLED, "false");
+			mContentResolver.update(
+					Uri.parse("content://" + PackageListProvider.AUTHORITY
+							+ "/" + PackageListProvider.BASE_PATH + "/package/"
+							+ packageName), values, null, null);
 		}
-	};
+		return enabled;
+	}
+
+	private boolean disableHwa(String packageName) {
+		boolean disabled = false;
+		File file = new File("/data/local/hwui.deny/" + packageName);
+		if (!file.exists()) {
+			try {
+				disabled = file.createNewFile();
+			} catch (IOException e) {
+				Log.w(TAG, "Creation of /data/local/hwui.deny/" + packageName
+						+ " failed : IOException");
+			}
+		} else
+			disabled = true;
+		if (disabled) {
+			ContentValues values = new ContentValues();
+			values.put(PackageListProvider.HWA_DISABLED, "true");
+			mContentResolver.update(
+					Uri.parse("content://" + PackageListProvider.AUTHORITY
+							+ "/" + PackageListProvider.BASE_PATH + "/package/"
+							+ packageName), values, null, null);
+		}
+		return disabled;
+	}
 }
