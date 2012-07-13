@@ -111,12 +111,12 @@ public class PackageListFragment extends ListFragment implements
 		else
 			mListView.clearTextFilter();
 		restartLoading();
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		return false;
+		return true;
 	}
 
 	private class ScanForPackages extends AsyncTask<Void, Void, Void> {
