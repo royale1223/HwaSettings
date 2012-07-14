@@ -197,6 +197,8 @@ public class PackageListFragment extends ListFragment implements
 					Uri.parse("content://" + PackageListProvider.AUTHORITY
 							+ "/" + PackageListProvider.BASE_PATH + "/package/"
 							+ packageName), values, null, null);
+			mContentResolver.notifyChange(PackageListProvider.CONTENT_URI, null);
+			Log.d(TAG, "db updated");
 		}
 		return enabled;
 	}
@@ -220,6 +222,8 @@ public class PackageListFragment extends ListFragment implements
 					Uri.parse("content://" + PackageListProvider.AUTHORITY
 							+ "/" + PackageListProvider.BASE_PATH + "/package/"
 							+ packageName), values, null, null);
+			mContentResolver.notifyChange(PackageListProvider.CONTENT_URI, null);
+			Log.d(TAG, "db updated");
 		}
 		return disabled;
 	}
