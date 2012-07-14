@@ -4,7 +4,7 @@
     android:sharedUserId="android.uid.system"
     android:versionName="1.00 beta" >
 
-    <uses-sdk android:minSdkVersion="15" />
+    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="15"/>
 
     <application
         android:icon="@drawable/ic_launcher"
