@@ -190,7 +190,7 @@ public class PackageListFragment extends ListFragment implements
 			}
 		}
 		restartLoading();
-		mActivityManager.restartPackage(packageName);
+		mActivityManager.killBackgroundProcesses(packageName);
 	}
 
 	private boolean enableHwa(String packageName) {
