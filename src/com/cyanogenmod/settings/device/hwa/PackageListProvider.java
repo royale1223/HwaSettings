@@ -20,6 +20,8 @@ public class PackageListProvider extends ContentProvider {
 	public static final String BASE_PATH = "dir";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
+	public static final Uri PACKAGE_URI = Uri.parse("content://" + AUTHORITY
+			+ "/" + BASE_PATH + "/package");
 	protected static final String TAG = "PackageListProvider";
 
 	private Context mContext;
@@ -34,13 +36,19 @@ public class PackageListProvider extends ContentProvider {
 
 	static {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH, PACKAGES);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH, PACKAGES);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/package/*", PACKAGE);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/scan", PACKAGE_SCAN);
 	}
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		// TODO Auto-generated method stub
+		switch (sURIMatcher.match(uri)) {
+		case PACKAGE:
+			String packageName = uri.getLastPathSegment();
+			return mDatabase.delete(DatabaseHelper.PACKAGE_TABLE, PACKAGE_NAME
+					+ " IS ? ", new String[] { packageName });
+		}
 		return 0;
 	}
 
@@ -50,21 +58,23 @@ public class PackageListProvider extends ContentProvider {
 	}
 
 	@Override
-	public Uri insert(Uri uri, ContentValues values) {
-		switch (sURIMatcher.match(uri)) {
-		case PACKAGE_SCAN:
-			DatabaseTools.scanPackages(mDatabase, mContext);
-			break;
-		}
-		return null;
-	}
-
-	@Override
 	public boolean onCreate() {
 		mContext = getContext();
 		mDatabaseHelper = new DatabaseHelper(mContext);
 		mDatabase = mDatabaseHelper.getWritableDatabase();
 		return true;
+	}
+
+	@Override
+	public Uri insert(Uri uri, ContentValues values) {
+		switch (sURIMatcher.match(uri)) {
+		case PACKAGE_SCAN:
+			DatabaseTools.scanPackages(mDatabase, mContext);
+			break;
+		case PACKAGE:
+			mDatabase.insert(DatabaseHelper.PACKAGE_TABLE, null, values);
+		}
+		return uri;
 	}
 
 	@Override
