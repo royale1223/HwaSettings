@@ -22,6 +22,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		mContext = context;
 		mContentResolver = context.getContentResolver();
+		mPreferences = context.getSharedPreferences("preferences", Context.MODE_PRIVATE);
 		boolean firstTime = mPreferences.getBoolean("firstTime", true);
 		if (firstTime) {
 			SharedPreferences.Editor editor = mPreferences.edit();
