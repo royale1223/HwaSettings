@@ -13,7 +13,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -68,7 +67,7 @@ public class PackageListFragment extends ListFragment implements
 		mListView.setOnItemClickListener(this);
 		mSearchView.setOnQueryTextListener(this);
 		mSearchView.setSubmitButtonEnabled(false);
-		new ScanForPackages().execute();
+		startLoading();
 	}
 
 	private void startLoading() {
@@ -127,23 +126,6 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		return false;
-	}
-
-	private class ScanForPackages extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			mContentResolver.insert(
-					Uri.parse("content://" + PackageListProvider.AUTHORITY
-							+ "/" + PackageListProvider.BASE_PATH + "/scan"),
-					null);
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			startLoading();
-		}
 	}
 
 	@Override
