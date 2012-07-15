@@ -189,7 +189,6 @@ public class PackageListFragment extends ListFragment implements
 				checkBox.setChecked(false);
 			}
 		}
-		restartLoading();
 		mActivityManager.killBackgroundProcesses(packageName);
 	}
 
