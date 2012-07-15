@@ -18,10 +18,16 @@ public class PackageListProvider extends ContentProvider {
 
 	public static final String AUTHORITY = "com.cyanogenmod.settings.device.hwa.PackageListProvider";
 	public static final String BASE_PATH = "dir";
+
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
+	public static final Uri CONTENT_FILTER_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + BASE_PATH + "/filter");
 	public static final Uri PACKAGE_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH + "/package");
+	public static final Uri SCAN_URI = Uri.parse("content://" + AUTHORITY + "/"
+			+ BASE_PATH + "/scan");
+
 	protected static final String TAG = "PackageListProvider";
 
 	private Context mContext;
