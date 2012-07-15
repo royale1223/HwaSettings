@@ -39,28 +39,20 @@ public class PackageListFragment extends ListFragment implements
 	private ListView mListView;
 	private ActivityManager mActivityManager;
 	private ContentResolver mContentResolver;
+	private LoaderManager mLoaderManager;
+	private CheckBox checkBox;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setListShown(false);
 		mContext = getActivity();
 		mListView = (ListView) getListView();
 		mActivityManager = (ActivityManager) mContext
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		mContentResolver = mContext.getContentResolver();
+		mLoaderManager = getLoaderManager();
 		mSearchView = (SearchView) getActivity().findViewById(
 				R.id.hwa_package_list_search_view);
-		mListView.setTextFilterEnabled(true);
-		mListView.setOnItemClickListener(this);
-		mSearchView.setOnQueryTextListener(this);
-		mSearchView.setSubmitButtonEnabled(false);
-		new ScanForPackages().execute();
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		String[] from = new String[] { PackageListProvider.APPLICATION_LABEL,
 				PackageListProvider.PACKAGE_NAME,
 				PackageListProvider.HWA_DISABLED, PackageListProvider._ID };
@@ -70,16 +62,22 @@ public class PackageListFragment extends ListFragment implements
 				R.layout.hwa_settings_row, null, from, to,
 				SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		setListAdapter(adapter);
+		setListShown(false);
+		mListView.setTextFilterEnabled(true);
+		mListView.setOnItemClickListener(this);
+		mSearchView.setOnQueryTextListener(this);
+		mSearchView.setSubmitButtonEnabled(false);
+		new ScanForPackages().execute();
 	}
 
 	private void startLoading() {
 		adapter.notifyDataSetChanged();
 		getListView().invalidateViews();
-		getLoaderManager().initLoader(PACKAGE_LIST_LOADER, null, this);
+		mLoaderManager.initLoader(PACKAGE_LIST_LOADER, null, this);
 	}
 
 	private void restartLoading() {
-		getLoaderManager().restartLoader(PACKAGE_LIST_LOADER, null, this);
+		mLoaderManager.restartLoader(PACKAGE_LIST_LOADER, null, this);
 	}
 
 	@Override
@@ -139,12 +137,12 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		CheckBox cb = (CheckBox) view.findViewById(R.id.hwa_settings_blocked);
+		checkBox = (CheckBox) view.findViewById(R.id.hwa_settings_blocked);
 		TextView tv = (TextView) view
 				.findViewById(R.id.hwa_settings_packagename);
 		String packageName = (String) tv.getText();
-		if (cb.isChecked()) {
-			cb.setChecked(false);
+		if (checkBox.isChecked()) {
+			checkBox.setChecked(false);
 			boolean disabled = disableHwa(packageName);
 			if (disabled)
 				Toast.makeText(
@@ -158,10 +156,10 @@ public class PackageListFragment extends ListFragment implements
 						mContext.getString(
 								R.string.hwa_settings_hwa_disable_failed_toast,
 								packageName), Toast.LENGTH_SHORT).show();
-				cb.setChecked(true);
+				checkBox.setChecked(true);
 			}
 		} else {
-			cb.setChecked(true);
+			checkBox.setChecked(true);
 			boolean enabled = enableHwa(packageName);
 			if (enabled)
 				Toast.makeText(
@@ -176,7 +174,7 @@ public class PackageListFragment extends ListFragment implements
 						mContext.getString(
 								R.string.hwa_settings_hwa_enable_failed_toast,
 								packageName), Toast.LENGTH_SHORT).show();
-				cb.setChecked(false);
+				checkBox.setChecked(false);
 			}
 		}
 		restartLoading();
