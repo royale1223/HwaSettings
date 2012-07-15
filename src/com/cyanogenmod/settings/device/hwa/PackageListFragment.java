@@ -62,7 +62,6 @@ public class PackageListFragment extends ListFragment implements
 				R.layout.hwa_settings_row, null, from, to,
 				SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		setListAdapter(adapter);
-		setListShown(false);
 		mListView.setTextFilterEnabled(true);
 		mListView.setOnItemClickListener(this);
 		mSearchView.setOnQueryTextListener(this);
@@ -95,8 +94,6 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		adapter.swapCursor(cursor);
-		setListShown(true);
-		mSearchView.setVisibility(View.VISIBLE);
 	}
 
 	@Override
@@ -113,7 +110,6 @@ public class PackageListFragment extends ListFragment implements
 		if (query != null && query.equals(newFilter)) {
 			return true;
 		}
-		Log.d(TAG, "Filter text changed - " + newFilter);
 		query = newFilter;
 		if (newText.length() > 0)
 			mListView.setFilterText(newText);
@@ -190,7 +186,6 @@ public class PackageListFragment extends ListFragment implements
 							+ packageName), values, null, null);
 			mContentResolver
 					.notifyChange(PackageListProvider.CONTENT_URI, null);
-			Log.d(TAG, "db updated");
 		}
 		return enabled;
 	}
@@ -216,7 +211,6 @@ public class PackageListFragment extends ListFragment implements
 							+ packageName), values, null, null);
 			mContentResolver
 					.notifyChange(PackageListProvider.CONTENT_URI, null);
-			Log.d(TAG, "db updated");
 		}
 		return disabled;
 	}
