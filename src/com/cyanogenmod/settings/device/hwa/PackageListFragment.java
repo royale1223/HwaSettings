@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -82,10 +83,13 @@ public class PackageListFragment extends ListFragment implements
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		CursorLoader cursorLoader = new CursorLoader(getActivity(),
-				PackageListProvider.CONTENT_URI, null,
-				PackageListProvider.APPLICATION_LABEL + " LIKE '%" + query
-						+ "%'", null, PackageListProvider.APPLICATION_LABEL);
+		CursorLoader cursorLoader = new CursorLoader(
+				mContext,
+				PackageListProvider.CONTENT_URI,
+				null,
+				(!TextUtils.isEmpty(query) ? PackageListProvider.APPLICATION_LABEL
+						+ " LIKE '%" + query + "%'"
+						: null), null, PackageListProvider.APPLICATION_LABEL);
 		return cursorLoader;
 	}
 
@@ -103,7 +107,15 @@ public class PackageListFragment extends ListFragment implements
 
 	@Override
 	public boolean onQueryTextChange(String newText) {
-		query = newText;
+		String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
+		if (query == null && newFilter == null) {
+			return true;
+		}
+		if (query != null && query.equals(newFilter)) {
+			return true;
+		}
+		Log.d(TAG, "Filter text changed - " + newFilter);
+		query = newFilter;
 		if (newText.length() > 0)
 			mListView.setFilterText(newText);
 		else
@@ -114,7 +126,7 @@ public class PackageListFragment extends ListFragment implements
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		return true;
+		return false;
 	}
 
 	private class ScanForPackages extends AsyncTask<Void, Void, Void> {
