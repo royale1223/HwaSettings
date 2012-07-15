@@ -69,6 +69,12 @@ public class PackageListFragment extends ListFragment implements
 		startLoading();
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		restartLoading();
+	}
+
 	private void startLoading() {
 		adapter.notifyDataSetChanged();
 		getListView().invalidateViews();
