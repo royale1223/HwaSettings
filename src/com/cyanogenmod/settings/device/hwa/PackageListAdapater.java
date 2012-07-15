@@ -24,13 +24,16 @@ public class PackageListAdapater extends SimpleCursorAdapter {
 			String[] from, int[] to, int flags) {
 		super(context, layout, c, from, to, flags);
 		mInflater = LayoutInflater.from(context);
-	
 		mPackageManager = context.getPackageManager();
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		mCursor = getCursor();
 		ViewHolder holder;
+		if (mCursor.isClosed()) {
+			Log.d(TAG, "cursor is closed");
+			return convertView;
+		}
 		mCursor.moveToPosition(position);
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.hwa_settings_row, null);
