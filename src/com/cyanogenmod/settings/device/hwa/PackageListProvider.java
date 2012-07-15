@@ -94,9 +94,9 @@ public class PackageListProvider extends ContentProvider {
 		}
 		Cursor cursor = queryBuilder.query(mDatabase, projection, selection,
 				selectionArgs, null, null, sortOrder);
-		cursor.setNotificationUri(mContext.getContentResolver(), uri);
 		cursor = mDatabase.query(DatabaseHelper.PACKAGE_TABLE, projection,
 				selection, selectionArgs, null, null, null);
+		cursor.setNotificationUri(mContext.getContentResolver(), CONTENT_URI);
 		return cursor;
 	}
 
