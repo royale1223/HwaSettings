@@ -14,6 +14,7 @@
         <provider
             android:name="com.cyanogenmod.settings.device.hwa.PackageListProvider"
             android:authorities="com.cyanogenmod.settings.device.hwa.PackageListProvider"
+            android:exported="false"
             android:multiprocess="true" >
         </provider>
 
