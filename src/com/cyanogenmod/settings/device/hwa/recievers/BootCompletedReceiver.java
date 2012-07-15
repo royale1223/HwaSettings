@@ -7,21 +7,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.cyanogenmod.settings.device.hwa.DatabaseHelper;
 import com.cyanogenmod.settings.device.hwa.PackageListProvider;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
-	private static final String TAG = "PackagesMonitor";
+	protected static final String TAG = "BootCompletedReceiver";
 	private ContentResolver mContentResolver;
 	private SharedPreferences mPreferences;
 	private Context mContext;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i(TAG, "Received broadcast : " + intent.toString());
 		mContext = context;
 		mContentResolver = context.getContentResolver();
 		boolean firstTime = mPreferences.getBoolean("firstTime", true);

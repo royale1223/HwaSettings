@@ -2,7 +2,6 @@ package com.cyanogenmod.settings.device.hwa.recievers;
 
 import java.io.File;
 import java.util.Arrays;
-import com.cyanogenmod.settings.device.hwa.PackageListProvider;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -14,18 +13,18 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
+
+import com.cyanogenmod.settings.device.hwa.PackageListProvider;
 
 public class PackageAddedReceiver extends BroadcastReceiver {
 
-	private static final String TAG = "PackagesMonitor";
+	protected static final String TAG = "PackageAddedReceiver";
 	private ContentResolver mContentResolver;
 	private String mPackageName;
 	private PackageManager mPackageManager;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i(TAG, "Received broadcast : " + intent.toString());
 		mContentResolver = context.getContentResolver();
 		mPackageName = intent.getDataString().split(":")[1];
 		mPackageManager = context.getPackageManager();
