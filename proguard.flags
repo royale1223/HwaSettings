@@ -2,5 +2,4 @@
 -keep class com.cyanogenmod.settings.device.hwa.*Fragment
 -keep class com.cyanogenmod.settings.device.hwa.*Provider
 -keep class com.cyanogenmod.settings.device.hwa.*Settings
--keep class com.cyanogenmod.settings.device.hwa.PackageListFragment
 
