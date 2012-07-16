@@ -74,6 +74,7 @@ public class PackageListFragment extends ListFragment implements
 				R.layout.hwa_settings_row, null, from, to,
 				SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		setListAdapter(adapter);
+		setListShown(false);
 		mListView.setTextFilterEnabled(true);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnScrollListener(this);
@@ -113,6 +114,7 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		adapter.swapCursor(cursor);
+		setListShown(true);
 	}
 
 	@Override
