@@ -9,7 +9,9 @@ LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
 LOCAL_PACKAGE_NAME := HwaSettings
 LOCAL_MODULE_TAGS  := optional
+
 LOCAL_CERTIFICATE  := platform
+LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
 # LOCAL_REQUIRED_MODULES := jni stuff
 
