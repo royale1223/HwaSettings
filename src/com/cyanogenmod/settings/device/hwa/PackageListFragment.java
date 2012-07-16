@@ -11,15 +11,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -28,7 +35,7 @@ import android.widget.Toast;
 
 public class PackageListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,
-		OnItemClickListener {
+		OnItemClickListener, ListView.OnScrollListener {
 
 	protected static final String TAG = "PackageListFragment";
 	private static final int PACKAGE_LIST_LOADER = 0;
@@ -41,6 +48,11 @@ public class PackageListFragment extends ListFragment implements
 	private ContentResolver mContentResolver;
 	private LoaderManager mLoaderManager;
 	private CheckBox checkBox;
+	private boolean mBusy;
+
+	private LayoutInflater mInflater;
+	private Cursor mCursor;
+	private PackageManager mPackageManager;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -64,6 +76,7 @@ public class PackageListFragment extends ListFragment implements
 		setListAdapter(adapter);
 		mListView.setTextFilterEnabled(true);
 		mListView.setOnItemClickListener(this);
+		mListView.setOnScrollListener(this);
 		mSearchView.setOnQueryTextListener(this);
 		mSearchView.setSubmitButtonEnabled(false);
 		startLoading();
@@ -128,6 +141,47 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		return false;
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		switch (scrollState) {
+		case OnScrollListener.SCROLL_STATE_IDLE:
+			mBusy = false;
+
+			int count = view.getChildCount();
+			for (int i = 0; i < count; i++) {
+				View v = view.getChildAt(i);
+				ImageView icon = (ImageView) v
+						.findViewById(R.id.hwa_settings_app_icon);
+				if (icon.getTag() != null) {
+					String packageName = (String) ((TextView) v
+							.findViewById(R.id.hwa_settings_packagename))
+							.getText();
+					try {
+						icon.setImageDrawable(mPackageManager
+								.getApplicationIcon(packageName));
+					} catch (NameNotFoundException e) {
+						icon.setTag(null);
+						e.printStackTrace();
+					}
+					icon.setTag(null);
+				}
+			}
+
+			break;
+		case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+			mBusy = false;
+			break;
+		case OnScrollListener.SCROLL_STATE_FLING:
+			mBusy = true;
+			break;
+		}
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
 	}
 
 	@Override
@@ -219,5 +273,72 @@ public class PackageListFragment extends ListFragment implements
 					.notifyChange(PackageListProvider.CONTENT_URI, null);
 		}
 		return disabled;
+	}
+
+	public class PackageListAdapater extends SimpleCursorAdapter {
+
+		private static final String TAG = "PackageListAdapater";
+
+		public PackageListAdapater(Context context, int layout, Cursor c,
+				String[] from, int[] to, int flags) {
+			super(context, layout, c, from, to, flags);
+			mInflater = LayoutInflater.from(context);
+			mPackageManager = context.getPackageManager();
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			mCursor = getCursor();
+			ViewHolder holder;
+			if (mCursor.isClosed()) {
+				Log.d(TAG, "cursor is closed");
+				return convertView;
+			}
+			mCursor.moveToPosition(position);
+			if (convertView == null) {
+				convertView = mInflater
+						.inflate(R.layout.hwa_settings_row, null);
+				holder = new ViewHolder();
+				holder.label = (TextView) convertView
+						.findViewById(R.id.hwa_settings_name);
+				holder.packageName = (TextView) convertView
+						.findViewById(R.id.hwa_settings_packagename);
+				holder.enabled = (CheckBox) convertView
+						.findViewById(R.id.hwa_settings_blocked);
+				holder.icon = (ImageView) convertView
+						.findViewById(R.id.hwa_settings_app_icon);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+			String packageName = mCursor.getString(mCursor
+					.getColumnIndex(PackageListProvider.PACKAGE_NAME));
+			holder.label.setText(mCursor.getString(mCursor
+					.getColumnIndex(PackageListProvider.APPLICATION_LABEL)));
+			holder.packageName.setText(packageName);
+			if (!mBusy) {
+				try {
+					holder.icon.setImageDrawable(mPackageManager
+							.getApplicationIcon(packageName));
+				} catch (NameNotFoundException e) {
+					holder.icon.setImageResource(R.drawable.ic_default);
+					Log.w(TAG, "Icon " + packageName + " for not found!");
+				}
+				holder.icon.setTag(null);
+			} else {
+				holder.icon.setImageResource(R.drawable.ic_default);
+				holder.icon.setTag(this);
+			}
+			holder.enabled
+					.setChecked(!Boolean.parseBoolean(mCursor.getString(mCursor
+							.getColumnIndex(PackageListProvider.HWA_DISABLED))));
+			return convertView;
+		}
+	}
+
+	static class ViewHolder {
+		ImageView icon;
+		TextView label;
+		TextView packageName;
+		CheckBox enabled;
 	}
 }
