@@ -72,8 +72,7 @@ public class PackageListFragment extends ListFragment implements
 		int[] to = new int[] { R.id.hwa_settings_name,
 				R.id.hwa_settings_packagename, R.id.hwa_settings_enabled };
 		adapter = new PackageListAdapater(getActivity(),
-				R.layout.hwa_settings_row, null, from, to,
-				SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				R.layout.hwa_settings_row, null, from, to, 0);
 		setListAdapter(adapter);
 		setListShown(false);
 		mListView.setTextFilterEnabled(true);
