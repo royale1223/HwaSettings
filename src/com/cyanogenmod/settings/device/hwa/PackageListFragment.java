@@ -90,7 +90,6 @@ public class PackageListFragment extends ListFragment implements
 	}
 
 	private void startLoading() {
-		adapter.notifyDataSetChanged();
 		getListView().invalidateViews();
 		mLoaderManager.initLoader(PACKAGE_LIST_LOADER, null, this);
 	}
