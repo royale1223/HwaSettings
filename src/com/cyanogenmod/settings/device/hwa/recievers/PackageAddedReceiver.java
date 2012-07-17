@@ -46,9 +46,9 @@ public class PackageAddedReceiver extends BroadcastReceiver {
 			for (int i = 0; i < files.length; i++) {
 				packageBlacklist[i] = files[i].getName();
 			}
-			boolean hwaIsDiabled = false;
+			boolean hwaEnabled = true;
 			if (Arrays.asList(packageBlacklist).contains(mPackageName))
-				hwaIsDiabled = true;
+				hwaEnabled = false;
 			ApplicationInfo info = null;
 			try {
 				info = mPackageManager.getApplicationInfo(mPackageName,
@@ -61,7 +61,7 @@ public class PackageAddedReceiver extends BroadcastReceiver {
 					(String) mPackageManager.getApplicationLabel(info));
 			values.put(PackageListProvider.PACKAGE_NAME, mPackageName);
 			values.put(PackageListProvider.HWA_ENABLED,
-					String.valueOf(hwaIsDiabled));
+					String.valueOf(hwaEnabled));
 			mContentResolver.insert(Uri.withAppendedPath(
 					PackageListProvider.PACKAGE_URI, mPackageName), values);
 			return null;
