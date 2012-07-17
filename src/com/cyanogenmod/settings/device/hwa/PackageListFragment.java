@@ -13,18 +13,20 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -54,6 +56,7 @@ public class PackageListFragment extends ListFragment implements
 	private LayoutInflater mInflater;
 	private Cursor mCursor;
 	private PackageManager mPackageManager;
+	public static PackageObserver mPackageObserver;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -63,6 +66,9 @@ public class PackageListFragment extends ListFragment implements
 		mActivityManager = (ActivityManager) mContext
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		mContentResolver = mContext.getContentResolver();
+		mPackageObserver = new PackageObserver(new Handler());
+		mContentResolver.registerContentObserver(
+				PackageListProvider.CONTENT_URI, true, mPackageObserver);
 		mLoaderManager = getLoaderManager();
 		mSearchView = (SearchView) getActivity().findViewById(
 				R.id.hwa_package_list_search_view);
@@ -346,5 +352,24 @@ public class PackageListFragment extends ListFragment implements
 		TextView label;
 		TextView packageName;
 		CheckBox enabled;
+	}
+
+	public class PackageObserver extends ContentObserver {
+
+		public PackageObserver(Handler handler) {
+			super(handler);
+		}
+
+		@Override
+		public boolean deliverSelfNotifications() {
+			return true;
+		}
+
+		@Override
+		public void onChange(boolean selfChange) {
+			super.onChange(selfChange);
+			Log.d(TAG, "database changed");
+			restartLoading();
+		}
 	}
 }
