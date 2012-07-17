@@ -8,6 +8,6 @@
     <string name="hwa_settings_hwa_enabled_toast">HWA für %1$s aktiviert.</string>
     <string name="hwa_settings_hwa_enable_failed_toast">HWA Aktivieren für %1$s fehlgeschlagen!!</string>
     <string name="hwa_settings_search_hint">Eingabe zur Auswahl</string>
-    <string name="hwa_settings_database_upgrade">Datenbank wird aktualisiert (%1$d &gt;&gt;&gt; %1$d).</string>    
+    <string name="hwa_settings_database_upgrade">Datenbank wird aktualisiert (%1$d &gt;&gt;&gt; %1$d).</string>
 
 </resources>
