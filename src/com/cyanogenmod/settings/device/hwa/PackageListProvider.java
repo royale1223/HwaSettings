@@ -1,6 +1,7 @@
 package com.cyanogenmod.settings.device.hwa;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
@@ -8,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 public class PackageListProvider extends ContentProvider {
 
@@ -33,6 +35,7 @@ public class PackageListProvider extends ContentProvider {
 	private Context mContext;
 	private DatabaseHelper mDatabaseHelper;
 	private SQLiteDatabase mDatabase;
+	private ContentResolver mContentResolver;
 
 	private static final UriMatcher sURIMatcher = new UriMatcher(
 			UriMatcher.NO_MATCH);
@@ -53,8 +56,10 @@ public class PackageListProvider extends ContentProvider {
 		switch (sURIMatcher.match(uri)) {
 		case PACKAGE:
 			String packageName = uri.getLastPathSegment();
-			return mDatabase.delete(DatabaseHelper.PACKAGE_TABLE, PACKAGE_NAME
-					+ " IS ? ", new String[] { packageName });
+			int rows = mDatabase.delete(DatabaseHelper.PACKAGE_TABLE,
+					PACKAGE_NAME + " IS ? ", new String[] { packageName });
+			mContentResolver.notifyChange(uri,null);
+			return rows;
 		}
 		return 0;
 	}
@@ -65,23 +70,27 @@ public class PackageListProvider extends ContentProvider {
 	}
 
 	@Override
-	public boolean onCreate() {
-		mContext = getContext();
-		mDatabaseHelper = new DatabaseHelper(mContext);
-		mDatabase = mDatabaseHelper.getWritableDatabase();
-		return true;
-	}
-
-	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		switch (sURIMatcher.match(uri)) {
 		case PACKAGE_SCAN:
 			DatabaseTools.scanPackages(mDatabase, mContext);
+			mContentResolver.notifyChange(uri,null);
 			break;
 		case PACKAGE:
 			mDatabase.insert(DatabaseHelper.PACKAGE_TABLE, null, values);
+			mContentResolver.notifyChange(uri,null);
+			break;
 		}
 		return uri;
+	}
+
+	@Override
+	public boolean onCreate() {
+		mContext = getContext();
+		mContentResolver = mContext.getContentResolver();
+		mDatabaseHelper = new DatabaseHelper(mContext);
+		mDatabase = mDatabaseHelper.getWritableDatabase();
+		return true;
 	}
 
 	@Override
@@ -99,7 +108,7 @@ public class PackageListProvider extends ContentProvider {
 		}
 		Cursor cursor = queryBuilder.query(mDatabase, projection, selection,
 				selectionArgs, null, null, sortOrder);
-		cursor.setNotificationUri(mContext.getContentResolver(), CONTENT_URI);
+		cursor.setNotificationUri(mContentResolver, uri);
 		return cursor;
 	}
 
