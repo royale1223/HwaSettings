@@ -14,6 +14,7 @@ import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -173,7 +174,7 @@ public class PackageListFragment extends ListFragment implements
 
 			break;
 		case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-			mBusy = false;
+			mBusy = true;
 			break;
 		case OnScrollListener.SCROLL_STATE_FLING:
 			mBusy = true;
@@ -280,6 +281,8 @@ public class PackageListFragment extends ListFragment implements
 	public class PackageListAdapater extends SimpleCursorAdapter {
 
 		private static final String TAG = "PackageListAdapater";
+		private Drawable defaultIcon = PackageListFragment.this.getResources()
+				.getDrawable(R.drawable.ic_default);
 
 		public PackageListAdapater(Context context, int layout, Cursor c,
 				String[] from, int[] to, int flags) {
@@ -289,12 +292,10 @@ public class PackageListFragment extends ListFragment implements
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			mCursor = getCursor();
-			ViewHolder holder;
-			if (mCursor.isClosed()) {
-				Log.d(TAG, "cursor is closed");
-				return convertView;
+			if (mCursor == null) {
+				mCursor = getCursor();
 			}
+			ViewHolder holder;
 			mCursor.moveToPosition(position);
 			if (convertView == null) {
 				convertView = mInflater
@@ -327,7 +328,7 @@ public class PackageListFragment extends ListFragment implements
 				}
 				holder.icon.setTag(null);
 			} else {
-				holder.icon.setImageResource(R.drawable.ic_default);
+				holder.icon.setImageDrawable(defaultIcon);
 				holder.icon.setTag(this);
 			}
 			holder.enabled
