@@ -108,7 +108,8 @@ public class PackageListFragment extends ListFragment implements
 				null,
 				(!TextUtils.isEmpty(query) ? PackageListProvider.APPLICATION_LABEL
 						+ " LIKE '%" + query + "%'"
-						: null), null, PackageListProvider.APPLICATION_LABEL);
+						: null), null, PackageListProvider.HWA_ENABLED + ", "
+						+ PackageListProvider.APPLICATION_LABEL);
 		return cursorLoader;
 	}
 
