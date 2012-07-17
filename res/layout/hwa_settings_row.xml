@@ -46,7 +46,7 @@
     </LinearLayout>
 
     <CheckBox
-        android:id="@+id/hwa_settings_blocked"
+        android:id="@+id/hwa_settings_enabled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

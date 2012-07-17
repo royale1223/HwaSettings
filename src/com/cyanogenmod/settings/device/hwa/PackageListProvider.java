@@ -14,7 +14,7 @@ public class PackageListProvider extends ContentProvider {
 	public static final String _ID = "_id";
 	public static final String PACKAGE_NAME = "package_name";
 	public static final String APPLICATION_LABEL = "application_label";
-	public static final String HWA_DISABLED = "hwa_disabled";
+	public static final String HWA_ENABLED = "hwa_enabled";
 
 	public static final String AUTHORITY = "com.cyanogenmod.settings.device.hwa.PackageListProvider";
 	public static final String BASE_PATH = "dir";

@@ -48,7 +48,7 @@ public class PackageListFragment extends ListFragment implements
 	private ActivityManager mActivityManager;
 	private ContentResolver mContentResolver;
 	private LoaderManager mLoaderManager;
-	private CheckBox checkBox;
+	private CheckBox hwaCheck;
 	private boolean mBusy;
 
 	private LayoutInflater mInflater;
@@ -68,9 +68,9 @@ public class PackageListFragment extends ListFragment implements
 				R.id.hwa_package_list_search_view);
 		String[] from = new String[] { PackageListProvider.APPLICATION_LABEL,
 				PackageListProvider.PACKAGE_NAME,
-				PackageListProvider.HWA_DISABLED, PackageListProvider._ID };
+				PackageListProvider.HWA_ENABLED, PackageListProvider._ID };
 		int[] to = new int[] { R.id.hwa_settings_name,
-				R.id.hwa_settings_packagename, R.id.hwa_settings_blocked };
+				R.id.hwa_settings_packagename, R.id.hwa_settings_enabled };
 		adapter = new PackageListAdapater(getActivity(),
 				R.layout.hwa_settings_row, null, from, to,
 				SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -190,12 +190,12 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		checkBox = (CheckBox) view.findViewById(R.id.hwa_settings_blocked);
 		TextView tv = (TextView) view
 				.findViewById(R.id.hwa_settings_packagename);
 		String packageName = (String) tv.getText();
-		if (checkBox.isChecked()) {
-			checkBox.setChecked(false);
+		hwaCheck = (CheckBox) view.findViewById(R.id.hwa_settings_enabled);
+		if (hwaCheck.isChecked()) {
+			hwaCheck.setChecked(false);
 			boolean disabled = disableHwa(packageName);
 			if (disabled)
 				Toast.makeText(
@@ -209,10 +209,10 @@ public class PackageListFragment extends ListFragment implements
 						mContext.getString(
 								R.string.hwa_settings_hwa_disable_failed_toast,
 								packageName), Toast.LENGTH_SHORT).show();
-				checkBox.setChecked(true);
+				hwaCheck.setChecked(true);
 			}
 		} else {
-			checkBox.setChecked(true);
+			hwaCheck.setChecked(true);
 			boolean enabled = enableHwa(packageName);
 			if (enabled)
 				Toast.makeText(
@@ -227,7 +227,7 @@ public class PackageListFragment extends ListFragment implements
 						mContext.getString(
 								R.string.hwa_settings_hwa_enable_failed_toast,
 								packageName), Toast.LENGTH_SHORT).show();
-				checkBox.setChecked(false);
+				hwaCheck.setChecked(false);
 			}
 		}
 		mActivityManager.killBackgroundProcesses(packageName);
@@ -242,13 +242,10 @@ public class PackageListFragment extends ListFragment implements
 			enabled = true;
 		if (enabled) {
 			ContentValues values = new ContentValues();
-			values.put(PackageListProvider.HWA_DISABLED, "false");
-			mContentResolver.update(
-					Uri.parse("content://" + PackageListProvider.AUTHORITY
-							+ "/" + PackageListProvider.BASE_PATH + "/package/"
-							+ packageName), values, null, null);
-			mContentResolver
-					.notifyChange(PackageListProvider.CONTENT_URI, null);
+			values.put(PackageListProvider.HWA_ENABLED, "true");
+			mContentResolver.update(Uri.withAppendedPath(
+					PackageListProvider.PACKAGE_URI, packageName), values,
+					null, null);
 		}
 		return enabled;
 	}
@@ -267,13 +264,10 @@ public class PackageListFragment extends ListFragment implements
 			disabled = true;
 		if (disabled) {
 			ContentValues values = new ContentValues();
-			values.put(PackageListProvider.HWA_DISABLED, "true");
-			mContentResolver.update(
-					Uri.parse("content://" + PackageListProvider.AUTHORITY
-							+ "/" + PackageListProvider.BASE_PATH + "/package/"
-							+ packageName), values, null, null);
-			mContentResolver
-					.notifyChange(PackageListProvider.CONTENT_URI, null);
+			values.put(PackageListProvider.HWA_ENABLED, "false");
+			mContentResolver.update(Uri.withAppendedPath(
+					PackageListProvider.PACKAGE_URI, packageName), values,
+					null, null);
 		}
 		return disabled;
 	}
@@ -306,7 +300,7 @@ public class PackageListFragment extends ListFragment implements
 				holder.packageName = (TextView) convertView
 						.findViewById(R.id.hwa_settings_packagename);
 				holder.enabled = (CheckBox) convertView
-						.findViewById(R.id.hwa_settings_blocked);
+						.findViewById(R.id.hwa_settings_enabled);
 				holder.icon = (ImageView) convertView
 						.findViewById(R.id.hwa_settings_app_icon);
 				convertView.setTag(holder);
@@ -331,9 +325,9 @@ public class PackageListFragment extends ListFragment implements
 				holder.icon.setImageDrawable(defaultIcon);
 				holder.icon.setTag(this);
 			}
-			holder.enabled
-					.setChecked(!Boolean.parseBoolean(mCursor.getString(mCursor
-							.getColumnIndex(PackageListProvider.HWA_DISABLED))));
+			holder.enabled.setChecked(Boolean.parseBoolean(mCursor
+					.getString(mCursor
+							.getColumnIndex(PackageListProvider.HWA_ENABLED))));
 			return convertView;
 		}
 	}

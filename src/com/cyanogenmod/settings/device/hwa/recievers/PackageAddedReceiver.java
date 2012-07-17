@@ -59,7 +59,7 @@ public class PackageAddedReceiver extends BroadcastReceiver {
 			values.put(PackageListProvider.APPLICATION_LABEL,
 					(String) mPackageManager.getApplicationLabel(info));
 			values.put(PackageListProvider.PACKAGE_NAME, mPackageName);
-			values.put(PackageListProvider.HWA_DISABLED,
+			values.put(PackageListProvider.HWA_ENABLED,
 					String.valueOf(hwaIsDiabled));
 			mContentResolver.insert(Uri.withAppendedPath(
 					PackageListProvider.PACKAGE_URI, mPackageName),
@@ -67,5 +67,4 @@ public class PackageAddedReceiver extends BroadcastReceiver {
 			return null;
 		}
 	}
-
 }

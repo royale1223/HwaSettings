@@ -43,19 +43,19 @@ public class DatabaseTools {
 		String[] installedPackages = new String[list.size()];
 		for (int i = 0; i < list.size(); i++) {
 			ApplicationInfo info = list.get(i);
-			boolean hwaIsDiabled = false;
+			boolean hwaEnabled = true;
 			String packageName = info.packageName;
 			installedPackages[i] = info.packageName;
 			if (Arrays.asList(packageBlacklist).contains(packageName))
-				hwaIsDiabled = true;
+				hwaEnabled = false;
 			else
-				hwaIsDiabled = false;
+				hwaEnabled = true;
 			ContentValues values = new ContentValues();
 			values.put(PackageListProvider.APPLICATION_LABEL,
 					(String) pm.getApplicationLabel(info));
 			values.put(PackageListProvider.PACKAGE_NAME, packageName);
-			values.put(PackageListProvider.HWA_DISABLED,
-					String.valueOf(hwaIsDiabled));
+			values.put(PackageListProvider.HWA_ENABLED,
+					String.valueOf(hwaEnabled));
 			if (Arrays.asList(databasePackages).contains(packageName)) {
 				database.update(DatabaseHelper.PACKAGE_TABLE, values,
 						PackageListProvider.PACKAGE_NAME + " IS ?",

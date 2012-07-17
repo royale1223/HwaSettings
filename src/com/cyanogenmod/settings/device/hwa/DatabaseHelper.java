@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " VARCHAR(50), "
 			+ PackageListProvider.PACKAGE_NAME
 			+ " VARCHAR(100) UNIQUE, "
-			+ PackageListProvider.HWA_DISABLED + " VARCHAR(10))";
+			+ PackageListProvider.HWA_ENABLED + " VARCHAR(10))";
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
