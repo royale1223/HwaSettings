@@ -106,7 +106,7 @@ public class PackageListFragment extends ListFragment implements
 				PackageListProvider.CONTENT_URI,
 				null,
 				(!TextUtils.isEmpty(query) ? PackageListProvider.APPLICATION_LABEL
-						+ " LIKE '%" + query + "%'"
+						+ " LIKE '" + query + "%'"
 						: null), null, PackageListProvider.HWA_ENABLED + ", "
 						+ PackageListProvider.APPLICATION_LABEL);
 		return cursorLoader;
