@@ -3,10 +3,11 @@
 
     <string name="app_name">HWA Einstellungen</string>
     <string name="hwa_settings_image_content">Bild</string>
-    <string name="hwa_settings_hwa_disabled_toast">HWA deaktivieren für %1$s.</string>
-    <string name="hwa_settings_hwa_disable_failed_toast"> HWA deaktivieren für %1$s fehlgeschlagen!!</string>
-    <string name="hwa_settings_hwa_enabled_toast">HWA aktivieren für %1$s.</string>
-    <string name="hwa_settings_hwa_enable_failed_toast"> HWA aktivieren für %1$s fehlgeschlagen!!</string>
-    <string name="hwa_settings_search_hint">Eingabe zur Auswahl</string>
+    <string name="hwa_settings_hwa_disabled_toast">HWA deaktiviert für %1$s.</string>
+    <string name="hwa_settings_hwa_disable_failed_toast">HWA deaktivieren für %1$s fehlgeschlagen!!</string>
+    <string name="hwa_settings_hwa_enabled_toast">HWA aktiviert für %1$s.</string>
+    <string name="hwa_settings_hwa_enable_failed_toast">HWA aktivieren für %1$s fehlgeschlagen!!</string>
+    <string name="hwa_settings_search_hint">Filtern durch Eingabe</string>
+    <string name="hwa_settings_database_upgrade">Datenbank wird aktualisiert (%1$d &gt;&gt;&gt; %1$d).</string>
 
 </resources>
