@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">HWA Einstellungen</string>
+    <string name="hwa_settings_image_content" >Bild</string>
+    <string name="hwa_settings_hwa_disabled_toast">HWA auschalten für %1$s.</string>
+    <string name="hwa_settings_hwa_disable_failed_toast"> HWA auschalten für %1$s fehlgeschlagen!!</string>
+    <string name="hwa_settings_hwa_enabled_toast">HWA einschalten für %1$s.</string>
+    <string name="hwa_settings_hwa_enable_failed_toast"> HWA einschalten für %1$s fehlgeschlagen!!</string>
+    <string name="hwa_settings_search_hint">Eingabe zur Auswahl</string>
+
+</resources>
