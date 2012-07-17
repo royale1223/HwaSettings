@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ustawienia HWA</string>
+    <string name="app_name">Ustawienia Hwa</string>
     <string name="hwa_settings_image_content" >Zdjęcie</string>
     <string name="hwa_settings_hwa_disabled_toast">Wyłączono hwa dla %1$s.</string>
     <string name="hwa_settings_hwa_disable_failed_toast">Wyłączanie hwa dla %1$s zakończone niepowodzeniem!!</string>
