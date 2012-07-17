@@ -43,7 +43,7 @@ public class PackageListFragment extends ListFragment implements
 	private PackageListAdapater adapter;
 	private SearchView mSearchView;
 	protected Context mContext;
-	private String query = "";
+	private String mCurFilter = "";
 	private ListView mListView;
 	private ActivityManager mActivityManager;
 	private ContentResolver mContentResolver;
@@ -101,13 +101,16 @@ public class PackageListFragment extends ListFragment implements
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		CursorLoader cursorLoader = new CursorLoader(
-				mContext,
-				PackageListProvider.CONTENT_URI,
-				null,
-				(!TextUtils.isEmpty(query) ? PackageListProvider.APPLICATION_LABEL
-						+ " LIKE '" + query + "%'"
-						: null), null, PackageListProvider.HWA_ENABLED + ", "
+		Uri baseUri;
+		if (mCurFilter != null) {
+			baseUri = Uri.withAppendedPath(
+					PackageListProvider.CONTENT_FILTER_URI,
+					Uri.encode(mCurFilter));
+		} else {
+			baseUri = PackageListProvider.CONTENT_URI;
+		}
+		CursorLoader cursorLoader = new CursorLoader(mContext, baseUri, null,
+				null, null, PackageListProvider.HWA_ENABLED + ", "
 						+ PackageListProvider.APPLICATION_LABEL);
 		return cursorLoader;
 	}
@@ -126,13 +129,13 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public boolean onQueryTextChange(String newText) {
 		String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-		if (query == null && newFilter == null) {
+		if (mCurFilter == null && newFilter == null) {
 			return true;
 		}
-		if (query != null && query.equals(newFilter)) {
+		if (mCurFilter != null && mCurFilter.equals(newFilter)) {
 			return true;
 		}
-		query = newFilter;
+		mCurFilter = newFilter;
 		if (newText.length() > 0)
 			mListView.setFilterText(newText);
 		else

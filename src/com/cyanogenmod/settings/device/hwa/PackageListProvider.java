@@ -39,12 +39,13 @@ public class PackageListProvider extends ContentProvider {
 	private static final int PACKAGES = 0;
 	private static final int PACKAGE = 1;
 	private static final int PACKAGE_SCAN = 2;
+	private static final int PACKAGE_FILTER = 3;
 
 	static {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH, PACKAGES);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH, PACKAGES);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/package/*", PACKAGE);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/scan", PACKAGE_SCAN);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/filter/*", PACKAGE_FILTER);
 	}
 
 	@Override
@@ -91,6 +92,10 @@ public class PackageListProvider extends ContentProvider {
 		switch (sURIMatcher.match(uri)) {
 		case PACKAGES:
 			break;
+		case PACKAGE_FILTER:
+			String query = uri.getLastPathSegment();
+			queryBuilder.appendWhere(APPLICATION_LABEL + " LIKE '" + query
+					+ "%'");
 		}
 		Cursor cursor = queryBuilder.query(mDatabase, projection, selection,
 				selectionArgs, null, null, sortOrder);
@@ -104,10 +109,12 @@ public class PackageListProvider extends ContentProvider {
 		switch (sURIMatcher.match(uri)) {
 		case PACKAGE:
 			String packageName = uri.getLastPathSegment();
-			return mDatabase.update(DatabaseHelper.PACKAGE_TABLE, values,
+			int rows = mDatabase.update(DatabaseHelper.PACKAGE_TABLE, values,
 					PACKAGE_NAME + " IS ? ", new String[] { packageName });
+			Log.d(TAG, "Db update completed");
+			mContentResolver.notifyChange(uri,null);
+			return rows;
 		}
 		return 0;
 	}
-
 }
