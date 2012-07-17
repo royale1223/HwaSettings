@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Configuraciones Hwa</string>
+    <string name="hwa_settings_image_content">Imagen</string>
+    <string name="hwa_settings_hwa_disabled_toast">Hwa deshabilitado para %1$s.</string>
+    <string name="hwa_settings_hwa_disable_failed_toast">Deshabilitar hwa para %1$s falló!!</string>
+    <string name="hwa_settings_hwa_enabled_toast">Hwa habilitado para %1$s.</string>
+    <string name="hwa_settings_hwa_enable_failed_toast">Habilitar hwa para %1$s falló!!</string>
+    <string name="hwa_settings_search_hint">Escriba para filtrar</string>
+
+</resources>
