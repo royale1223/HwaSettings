@@ -191,9 +191,17 @@ public class PackageListFragment extends ListFragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		TextView tv = (TextView) view
-				.findViewById(R.id.hwa_settings_packagename);
-		String packageName = (String) tv.getText();
+		Cursor cursor = mContentResolver.query(PackageListProvider.PACKAGE_URI,
+				new String[] { PackageListProvider.PACKAGE_NAME },
+				PackageListProvider._ID + " IS ?",
+				new String[] { String.valueOf(id) }, null);
+		String packageName;
+		if (cursor.moveToFirst()) {
+			packageName = cursor.getString(cursor
+					.getColumnIndex(PackageListProvider.PACKAGE_NAME));
+		} else
+			return;
+		cursor.close();
 		hwaCheck = (CheckBox) view.findViewById(R.id.hwa_settings_enabled);
 		if (hwaCheck.isChecked()) {
 			hwaCheck.setChecked(false);
