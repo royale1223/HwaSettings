@@ -294,9 +294,7 @@ public class PackageListFragment extends ListFragment implements
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			if (mCursor == null) {
-				mCursor = getCursor();
-			}
+			mCursor = getCursor();
 			ViewHolder holder;
 			mCursor.moveToPosition(position);
 			if (convertView == null) {
