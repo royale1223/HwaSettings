@@ -50,12 +50,17 @@ public class DatabaseTools {
 				hwaEnabled = false;
 			else
 				hwaEnabled = true;
+			boolean isSystem = false;
+			if (info.sourceDir.startsWith("/system/app")) {
+				isSystem = true;
+			}
 			ContentValues values = new ContentValues();
 			values.put(PackageListProvider.APPLICATION_LABEL,
 					(String) pm.getApplicationLabel(info));
 			values.put(PackageListProvider.PACKAGE_NAME, packageName);
 			values.put(PackageListProvider.HWA_ENABLED,
 					String.valueOf(hwaEnabled));
+			values.put(PackageListProvider.IS_SYSTEM, String.valueOf(isSystem));
 			if (Arrays.asList(databasePackages).contains(packageName)) {
 				database.update(DatabaseHelper.PACKAGE_TABLE, values,
 						PackageListProvider.PACKAGE_NAME + " IS ?",

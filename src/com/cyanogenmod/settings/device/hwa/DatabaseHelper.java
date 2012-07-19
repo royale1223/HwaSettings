@@ -9,7 +9,7 @@ import android.widget.Toast;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "package_database";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	public static final String PACKAGE_TABLE = "packages";
 	protected Context mContext;
 	private static final String DATABASE_CREATE_STATEMENT = "CREATE TABLE IF NOT EXISTS "
@@ -21,7 +21,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " VARCHAR(50), "
 			+ PackageListProvider.PACKAGE_NAME
 			+ " VARCHAR(100) UNIQUE, "
-			+ PackageListProvider.HWA_ENABLED + " VARCHAR(10))";
+			+ PackageListProvider.HWA_ENABLED
+			+ " VARCHAR(10), "
+			+ PackageListProvider.IS_SYSTEM + " INTEGER)";
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -41,7 +43,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				mContext.getString(R.string.hwa_settings_database_upgrade,
 						oldVersion, newVersion), Toast.LENGTH_LONG).show();
 		db.execSQL("DROP TABLE IF EXISTS " + PACKAGE_TABLE);
-		db.execSQL(DATABASE_CREATE_STATEMENT);
-		DatabaseTools.scanPackages(db, mContext);
+		onCreate(db);
 	}
 }

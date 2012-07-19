@@ -101,6 +101,7 @@ public class PackageListFragment extends ListFragment implements
 		}
 		CursorLoader cursorLoader = new CursorLoader(mContext, baseUri, null,
 				null, null, PackageListProvider.HWA_ENABLED + ", "
+						+ PackageListProvider.IS_SYSTEM + ", "
 						+ PackageListProvider.APPLICATION_LABEL);
 		return cursorLoader;
 	}
@@ -187,7 +188,6 @@ public class PackageListFragment extends ListFragment implements
 		CheckBox hwaCheck = (CheckBox) view
 				.findViewById(R.id.hwa_settings_enabled);
 		boolean enableHwa = !hwaCheck.isChecked();
-		//hwaCheck.setChecked(enableHwa);
 		String packageName = (String) ((TextView) view
 				.findViewById(R.id.hwa_settings_packagename)).getText();
 		Intent service = new Intent(mContext, HwaSettingsService.class);

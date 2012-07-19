@@ -57,11 +57,16 @@ public class PackageAddedReceiver extends BroadcastReceiver {
 				Log.w(TAG, "Package " + mPackageName + " not found!!");
 				return null;
 			}
+			boolean isSystem = false;
+			if (info.sourceDir.startsWith("/system/app")) {
+				isSystem = true;
+			}
 			values.put(PackageListProvider.APPLICATION_LABEL,
 					(String) mPackageManager.getApplicationLabel(info));
 			values.put(PackageListProvider.PACKAGE_NAME, mPackageName);
 			values.put(PackageListProvider.HWA_ENABLED,
 					String.valueOf(hwaEnabled));
+			values.put(PackageListProvider.IS_SYSTEM, String.valueOf(isSystem));
 			mContentResolver.insert(Uri.withAppendedPath(
 					PackageListProvider.PACKAGE_URI, mPackageName), values);
 			return null;
