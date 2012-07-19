@@ -1,4 +1,4 @@
-package com.cyanogenmod.settings.device.hwa.recievers;
+package com.cyanogenmod.settings.device.hwa.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;

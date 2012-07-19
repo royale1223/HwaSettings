@@ -1,4 +1,4 @@
-package com.cyanogenmod.settings.device.hwa.recievers;
+package com.cyanogenmod.settings.device.hwa.receivers;
 
 import java.io.File;
 import java.util.Arrays;
