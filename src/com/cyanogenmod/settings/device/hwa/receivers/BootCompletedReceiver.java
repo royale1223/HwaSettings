@@ -28,9 +28,18 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 			SharedPreferences.Editor editor = mPreferences.edit();
 			editor.putBoolean("firstTime", false);
 			editor.commit();
-			new CreateDatabase().execute();
-		} else
-			new ScanForPackages().execute();
+			try {
+				new CreateDatabase().execute();
+			} catch (Exception e) {
+				// unable to create database...
+			}
+		} else {
+			try {
+				new ScanForPackages().execute();
+			} catch (Exception e) {
+				// hmm this should not be done at each boot...
+			}
+		}
 	}
 
 	private class ScanForPackages extends AsyncTask<Void, Void, Void> {
