@@ -18,7 +18,7 @@ public class PackageListProvider extends ContentProvider {
 	public static final String APPLICATION_LABEL = "application_label";
 	public static final String HWA_ENABLED = "hwa_enabled";
 	public static final String IS_SYSTEM = "system_app";
-	
+
 	public static final String AUTHORITY = "com.cyanogenmod.settings.device.hwa.PackageListProvider";
 	public static final String BASE_PATH = "dir";
 
@@ -59,7 +59,7 @@ public class PackageListProvider extends ContentProvider {
 			String packageName = uri.getLastPathSegment();
 			int rows = mDatabase.delete(DatabaseHelper.PACKAGE_TABLE,
 					PACKAGE_NAME + " IS ? ", new String[] { packageName });
-			mContentResolver.notifyChange(uri,null);
+			mContentResolver.notifyChange(uri, null);
 			return rows;
 		}
 		return 0;
@@ -75,11 +75,11 @@ public class PackageListProvider extends ContentProvider {
 		switch (sURIMatcher.match(uri)) {
 		case PACKAGE_SCAN:
 			DatabaseTools.scanPackages(mDatabase, mContext);
-			mContentResolver.notifyChange(uri,null);
+			mContentResolver.notifyChange(uri, null);
 			break;
 		case PACKAGE:
 			mDatabase.insert(DatabaseHelper.PACKAGE_TABLE, null, values);
-			mContentResolver.notifyChange(uri,null);
+			mContentResolver.notifyChange(uri, null);
 			break;
 		}
 		return uri;
@@ -122,7 +122,7 @@ public class PackageListProvider extends ContentProvider {
 			int rows = mDatabase.update(DatabaseHelper.PACKAGE_TABLE, values,
 					PACKAGE_NAME + " IS ? ", new String[] { packageName });
 			Log.d(TAG, "Db update completed");
-			mContentResolver.notifyChange(uri,null);
+			mContentResolver.notifyChange(uri, null);
 			return rows;
 		}
 		return 0;
