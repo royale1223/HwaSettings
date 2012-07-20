@@ -27,8 +27,7 @@ public class PackageRemovedReceiver extends BroadcastReceiver {
 		@Override
 		protected Void doInBackground(Void... params) {
 			mContentResolver.delete(Uri.withAppendedPath(
-					PackageListProvider.PACKAGE_URI, mPackageName),
-					null, null);
+					PackageListProvider.PACKAGE_URI, mPackageName), null, null);
 			return null;
 		}
 	}

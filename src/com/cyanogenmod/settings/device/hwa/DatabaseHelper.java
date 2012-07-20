@@ -9,7 +9,7 @@ import android.widget.Toast;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "package_database";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	public static final String PACKAGE_TABLE = "packages";
 	protected Context mContext;
 	private static final String DATABASE_CREATE_STATEMENT = "CREATE TABLE IF NOT EXISTS "
@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " VARCHAR(100) UNIQUE, "
 			+ PackageListProvider.HWA_ENABLED
 			+ " VARCHAR(10), "
-			+ PackageListProvider.IS_SYSTEM + " INTEGER)";
+			+ PackageListProvider.IS_SYSTEM + " VARCHAR(10))";
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
