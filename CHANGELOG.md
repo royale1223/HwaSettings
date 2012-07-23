@@ -1,3 +1,13 @@
+Version 1.04 *(2012-07-23)*
+---------------------------
+* New : Keep system apps at the end of the list  
+* New : Traditional Chinese translations
+* New : Croatian translations
+* New : Spanish Spain translation 
+* New : Slovak translations
+* New : Bulgarian translations
+* Fix : Ignore exceptions on boot
+
 Version 1.03 *(2012-07-18)*
 ---------------------------
 * New : Improve list performance  
