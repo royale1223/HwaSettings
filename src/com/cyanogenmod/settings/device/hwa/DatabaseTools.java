@@ -69,7 +69,7 @@ public class DatabaseTools {
 				database.insert(DatabaseHelper.PACKAGE_TABLE, null, values);
 		}
 		for (int i = 0; i < databasePackages.length; i++) {
-			if (Arrays.asList(installedPackages).contains(databasePackages[i])) {
+			if (!Arrays.asList(installedPackages).contains(databasePackages[i])) {
 				database.delete(DatabaseHelper.PACKAGE_TABLE,
 						PackageListProvider.PACKAGE_NAME + " IS ?",
 						new String[] { databasePackages[i] });

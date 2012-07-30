@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -67,8 +68,14 @@ public class PackageAddedReceiver extends BroadcastReceiver {
 			values.put(PackageListProvider.HWA_ENABLED,
 					String.valueOf(hwaEnabled));
 			values.put(PackageListProvider.IS_SYSTEM, String.valueOf(isSystem));
-			mContentResolver.insert(Uri.withAppendedPath(
-					PackageListProvider.PACKAGE_URI, mPackageName), values);
+			Cursor cursor = mContentResolver.query(Uri.withAppendedPath(
+					PackageListProvider.PACKAGE_URI, mPackageName), null, null,
+					null, null);
+			if (cursor.getCount() <= 0) {
+				// if package not already inserted
+				mContentResolver.insert(Uri.withAppendedPath(
+						PackageListProvider.PACKAGE_URI, mPackageName), values);
+			}
 			return null;
 		}
 	}
